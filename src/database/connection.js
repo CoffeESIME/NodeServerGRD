@@ -2,9 +2,9 @@ import sql from "mssql";
 
 const dbsettings = {
   user: "Fabian",
-  password: "2012+Return",
+  password: "Coffee1996",
   server: "GDL-LAP-296",
-  database: "grd2",
+  database: "arduardo",
   options: {
     trustServerCertificate: true,
   },

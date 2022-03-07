@@ -1,7 +1,7 @@
 import { getConnection } from "../database/connection.js";
 import sql from "mssql";
 
-export const getGRD = async (req, res) => {
+export const getArduardo = async (req, res) => {
   const pool = await getConnection();
   const result = await pool
     .request()
@@ -41,3 +41,4 @@ export const selectFecha = async (req, res) => {
   res.json(result.recordset);
   console.log(result)
 };
+
