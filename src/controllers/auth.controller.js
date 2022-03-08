@@ -40,28 +40,42 @@ export const newUser= async (req, res)=>{
         (@id_user,@name, @last_name,@company, @level,@email, @password)`
         );
 
-        //aqui la palabra secreta necesita ir a otro archivo
-        const token=Jwt.sign({id: id_user }, 'ARDUARDO', {
-            expiresIn: 86400 //24 horas
-        })
-      res.status(200).json({token});
+      //   //aqui la palabra secreta necesita ir a otro archivo
+      //   const token=Jwt.sign({id: id_user }, 'ARDUARDO', {
+      //       expiresIn: 86400 //24 horas
+      //   })
+      // res.status(200).json({token});
+      console.log(result)
+      res.status(200).json({message: "Enviado"})
     }
     else{
         console.log("El usuario ya existe")
         res.status(200);
-
     }
-
-   
   }
   
   export const login = async(req,res)=>{
     const { email, passwordreq}=req.body;
-    console.log( email, passwordreq);
     const pool = await getConnection();
     const result = await pool
     .request()
-    .query(`SELECT * FROM [arduardo].[user]`
+    .query(`SELECT [user_password],[user_id], [user_first_name], [user_last_name], [user_level] FROM [arduardo].[user] WHERE user_mail= '${email}'`
     );
-    console.log(result)
+    if(result.recordset.length==1){
+        const validation= await bcrypt.compare(passwordreq, result.recordset[0].user_password);
+        if(validation){
+            const token=Jwt.sign({id: result.recordset[0].user_id }, 'ARDUARDO', {
+                expiresIn: 86400 //24 horas
+            })
+            res.status(200).json({token:token, user_name: result.recordset[0].user_first_name, user_last_name: result.recordset[0].user_last_name })
+        }
+        else{
+            res.status(401).json({token: null, message: "Password doesnt match"})
+        }
+    }
+    else{
+        console.log("No hay un correo")
+        res.status(200).json({message: "No hay usuario con ese correo"});
+    }
+    
   }
